@@ -1,8 +1,5 @@
 
-dna =1
-rna=2
-
-print(dna+rna)
+#-----Operators----
 
 seq1= "ATAGCTTTTGCTAAAGTAAGC"
 SEQ2="GCGCG"
@@ -13,8 +10,5 @@ print(seq1<SEQ2)
 print(seq1>SEQ2) 
 
 
-
-
-import sys 
  
 
