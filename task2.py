@@ -1,5 +1,5 @@
 # this script will read an input FASTA file and after analyzing the sequence store the result in a csv file
-
+import sys
 import csv
 
 def calculate_gc_content(sequence):
@@ -54,12 +54,13 @@ def save_to_csv(results, output_file):
         writer.writerows(results)
 
 #  Main Execution 
-fasta_file = 'input.fasta'  # here the fasta file name is "input"
-output_csv = 'sequence_analysis.csv'  # rsults will store in a csv file named sequence analysis
+if __name__=="__main__":
+ fasta_file = 'input.fasta'  # here the fasta file name is "input"
+ output_csv = 'sequence_analysis.csv'  # rsults will store in a csv file named sequence analysis
 
-sequences = read_fasta(fasta_file)
-results, unique_nucleotides = analyze_sequences(sequences)
-save_to_csv(results, output_csv)
+ sequences = read_fasta(fasta_file)
+ results, unique_nucleotides = analyze_sequences(sequences)
+ save_to_csv(results, output_csv)
 
-print("Unique nucleotides found across all sequences:", unique_nucleotides)
-print("Analysis complete. Results saved to:", output_csv)
+ print("Unique nucleotides found across all sequences:", unique_nucleotides)
+ print("Analysis complete. Results saved to:", output_csv)
