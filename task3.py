@@ -45,7 +45,9 @@ def write_fasta(sequences, output_file):       #Writes the filtered sequences to
     return True
 
 if __name__ == "__main__":
- 
+   if len(sys.argv)!=1:
+       sys.exit("invalid")
+
    input_file = input("Enter the path to the input FASTA file: ").strip()
    sequences = read_fasta(input_file)
     
@@ -58,8 +60,7 @@ if __name__ == "__main__":
             raise ValueError
    except ValueError:
         print("Invalid input. Please enter a non-negative integer for length.")
-        sys.exit()
-
+        
    filtered = filter_sequences(sequences, min_length)
    print(f"Sequences ≥ {min_length} bp: {len(filtered)}")
 
