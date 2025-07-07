@@ -6,9 +6,10 @@ import os
 import re
 from collections import defaultdict
 
+# -------------PARSING GFF FILE------------
 
 def parse_gff(file):
-    print("\n[Step 1] Parsing GFF File for Exon Coordinates...")
+    print("\n Parsing GFF File for Exon Coordinates...")
     chrom_map = {'NC_004354.4': '2L', 'NC_004353.4': '2R', 'NC_004351.4': '3L',
                  'NC_004350.4': '3R', 'NC_004352.4': 'X', 'NC_004355.4': '4',
                  'NC_004356.4': 'Y', 'NC_024511.2': 'X', 'NC_024512.1': 'Y'}
@@ -32,9 +33,10 @@ def parse_gff(file):
     print(exons_df.head(), "\n")
     return exons_df
 
+#------------PARSING VCF FILE----------------
 
 def parse_vcf(file):
-    print("[Step 2] Parsing VCF File for SNPs...")
+    print(" Parsing VCF File for SNPs...")
     snps = []
     with open(file) as f:
         for line in f:
@@ -51,9 +53,10 @@ def parse_vcf(file):
     print(snps_df.head(), "\n")
     return snps_df
 
+#-----------------MAPPING SNPS TO EXONS-----------------------
 
 def map_snps_to_exons(snps, exons):
-    print("[Step 3] Mapping SNPs to Exons...")
+    print(" Mapping SNPs to Exons...")
     snp_counts = defaultdict(int)
     for chrom in set(exons['seqid']) & set(snps['chrom']):
         snp_chr = snps[snps['chrom'] == chrom]
@@ -67,6 +70,7 @@ def map_snps_to_exons(snps, exons):
     print(mapped_df.head(), "\n")
     return mapped_df
 
+#------------NORMALIZING GENE IDs-------------------------
 
 def normalize_id(gid):
     if pd.isna(gid): return None
@@ -74,9 +78,10 @@ def normalize_id(gid):
     gid = re.sub(r'^(rna-|gene-|Dmel_)|(\.\d+)$', '', gid)
     return gid.split('-')[0] if gid.startswith("FBtr") else gid
 
+#-------------BUIL MAPPING DICTIONARY-------------------
 
 def build_mapping(mapping_file):
-    print("[Step 4] Building Mapping Dictionary...")
+    print(" Building Mapping Dictionary...")
     mapping = {}
     df = pd.read_csv(mapping_file, sep='\t')
     for _, row in df.iterrows():
@@ -93,8 +98,8 @@ def build_mapping(mapping_file):
     print(f"Mapping dictionary with {len(mapping)} entries created\n")
     return mapping
 
-
-def run_analysis(gff, vcf, expr_file, map_file=None):
+#-------------MAIN ANALYSIS-----------------
+def main(gff, vcf, expr_file, map_file=None):
     if not all(os.path.exists(f) for f in [gff, vcf, expr_file]):
         print("One or more input files not found.")
         return
@@ -107,14 +112,18 @@ def run_analysis(gff, vcf, expr_file, map_file=None):
 
     snp_df = map_snps_to_exons(snps, exons)
 
-    print("[Step 4] Calculating Exon Lengths and SNP Density...")
+#----------------CALCULATING SNP DENSITY-----------------------
+
+    print(" Calculating Exon Lengths and SNP Density...")
     exon_len = exons.assign(length=exons.end - exons.start + 1).groupby('gene_id')['length'].sum().to_dict()
     snp_df['exon_length'] = snp_df['gene_id'].map(exon_len)
     snp_df['snp_density'] = snp_df['snp_count'] / snp_df['exon_length']
     print("Preview of SNP Density Data:")
     print(snp_df.head(), "\n")
 
-    print("[Step 5] Reading Expression File...")
+#---------------READING EXPRESSION FILE-----------------
+
+    print(" Reading Expression File...")
     exp = pd.read_csv(expr_file)
     exp = exp.rename(columns={'primary_FBid': 'gene_id'})
     exp['expression'] = exp[[c for c in exp.columns if c not in ['gene_id', 'current_symbol']]].mean(axis=1)
@@ -134,37 +143,42 @@ def run_analysis(gff, vcf, expr_file, map_file=None):
         snp_df['gene_id_mapped'] = snp_df['gene_id_norm']
         exp['gene_id_mapped'] = exp['gene_id_norm']
 
-    print("[Step 6] Merging SNP and Expression Data...")
+#---------------MERGING SNPS AND EXPRESSION DATA IN CSV-----------------
+
+    print("Merging SNP and Expression Data...")
     merged = pd.merge(snp_df, exp, on='gene_id_mapped')
     merged = merged.dropna(subset=['expression', 'snp_density'])
     print(f"Merged dataset contains {len(merged)} genes")
     print("Preview of Merged Data:")
     print(merged.head(), "\n")
 
+   
+    output_csv = "snp_expression_merged_results.csv"
+    merged.to_csv(output_csv, index=False)
+    print(f"Merged results saved to: {output_csv}\n")
+
     if merged.empty:
         print("No common genes after merging.")
         return
 
-    print("[Step 7] Calculating Pearson Correlation...")
+#----------------------CALCULATING CORRELATION-------------------
+    print("Calculating Pearson Correlation...")
     r = merged['expression'].corr(merged['snp_density'])
     print(f"Pearson Correlation (original data): r = {r:.4f}")
 
-    print("[Step 8] Applying Log Transformation and Plotting Scatter Plot...")
-    merged['log_expression'] = np.log2(merged['expression'] + 1)
-    merged['log_snp_density'] = np.log2(merged['snp_density'] + 1)
-    r_log = merged['log_expression'].corr(merged['log_snp_density'])
-    print(f"Pearson Correlation (log-transformed): r = {r_log:.4f}\n")
+#-------------VISUALIZATION-----------------    
 
+    print(" Plotting Scatter Plot ...")
     plt.figure(figsize=(10, 7))
-    sns.scatterplot(data=merged, x='log_expression', y='log_snp_density', alpha=0.6, s=50)
-    plt.title(f"Log2 SNP Density vs Gene Expression\nPearson r = {r_log:.2f}")
-    plt.xlabel("Log2(Gene Expression + 1)")
-    plt.ylabel("Log2(SNP Density + 1)")
+    sns.scatterplot(data=merged, x='expression', y='snp_density', alpha=0.6, s=50)
+    plt.title(f"SNP Density vs Gene Expression\nPearson r = {r:.3f}")
+    plt.xlabel("Gene Expression")
+    plt.ylabel("SNP Density")
     plt.tight_layout()
-    plt.savefig("snp_vs_expression_log.png", dpi=300)
+    plt.savefig("snp_vs_expression.png", dpi=300)
     plt.show()
 
-    print("[Step 9] Generating Heatmap of Top 20 Variable Genes...")
+    print(" Generating Heatmap of Top 20 Variable Genes...")
     exp_raw = pd.read_csv(expr_file)
     exp_raw.set_index("primary_FBid", inplace=True)
     exp_raw.iloc[:, 1:] = exp_raw.iloc[:, 1:].apply(pd.to_numeric, errors='coerce')
@@ -188,7 +202,7 @@ def run_analysis(gff, vcf, expr_file, map_file=None):
 
 # --- Run the script ---
 if __name__ == "__main__":
-    run_analysis(
+    main(
         gff="Drosophila_Melanogaster.gff",
         vcf="snps.vcf",
         expr_file="expression.csv",
