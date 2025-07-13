@@ -1,0 +1,70 @@
+INFO - --------- Evaluation Results ---------
+INFO - Timestamp: 2025-07-13 23:04:27
+INFO - Accuracy: 0.6937
+INFO - Mean Squared Error (MSE): 0.3063
+INFO - Mean Absolute Error (MAE): 0.3063
+INFO - Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.68      0.97      0.80       498
+           1       0.78      0.20      0.32       279
+
+    accuracy                           0.69       777
+   macro avg       0.73      0.59      0.56       777
+weighted avg       0.72      0.69      0.63       777
+
+INFO - Confusion Matrix :
+          Predicted 0  Predicted 1
+Actual 0          482           16
+Actual 1          222           57
+INFO - Model Predictions vs Actual Labels (first 50 rows):
+INFO - Sample 1 - Predicted: 0, Actual: 0
+INFO - Sample 2 - Predicted: 0, Actual: 0
+INFO - Sample 3 - Predicted: 1, Actual: 1
+INFO - Sample 4 - Predicted: 1, Actual: 1
+INFO - Sample 5 - Predicted: 0, Actual: 0
+INFO - Sample 6 - Predicted: 0, Actual: 0
+INFO - Sample 7 - Predicted: 0, Actual: 0
+INFO - Sample 8 - Predicted: 0, Actual: 0
+INFO - Sample 9 - Predicted: 0, Actual: 0
+INFO - Sample 10 - Predicted: 0, Actual: 0
+INFO - Sample 11 - Predicted: 1, Actual: 1
+INFO - Sample 12 - Predicted: 0, Actual: 1
+INFO - Sample 13 - Predicted: 0, Actual: 0
+INFO - Sample 14 - Predicted: 0, Actual: 0
+INFO - Sample 15 - Predicted: 0, Actual: 0
+INFO - Sample 16 - Predicted: 0, Actual: 0
+INFO - Sample 17 - Predicted: 0, Actual: 0
+INFO - Sample 18 - Predicted: 0, Actual: 0
+INFO - Sample 19 - Predicted: 0, Actual: 0
+INFO - Sample 20 - Predicted: 0, Actual: 1
+INFO - Sample 21 - Predicted: 0, Actual: 0
+INFO - Sample 22 - Predicted: 0, Actual: 1
+INFO - Sample 23 - Predicted: 0, Actual: 0
+INFO - Sample 24 - Predicted: 0, Actual: 0
+INFO - Sample 25 - Predicted: 0, Actual: 0
+INFO - Sample 26 - Predicted: 0, Actual: 1
+INFO - Sample 27 - Predicted: 0, Actual: 1
+INFO - Sample 28 - Predicted: 0, Actual: 1
+INFO - Sample 29 - Predicted: 0, Actual: 1
+INFO - Sample 30 - Predicted: 0, Actual: 0
+INFO - Sample 31 - Predicted: 0, Actual: 0
+INFO - Sample 32 - Predicted: 0, Actual: 1
+INFO - Sample 33 - Predicted: 0, Actual: 1
+INFO - Sample 34 - Predicted: 0, Actual: 1
+INFO - Sample 35 - Predicted: 0, Actual: 0
+INFO - Sample 36 - Predicted: 0, Actual: 0
+INFO - Sample 37 - Predicted: 0, Actual: 0
+INFO - Sample 38 - Predicted: 0, Actual: 1
+INFO - Sample 39 - Predicted: 0, Actual: 0
+INFO - Sample 40 - Predicted: 0, Actual: 1
+INFO - Sample 41 - Predicted: 0, Actual: 0
+INFO - Sample 42 - Predicted: 0, Actual: 1
+INFO - Sample 43 - Predicted: 0, Actual: 1
+INFO - Sample 44 - Predicted: 0, Actual: 0
+INFO - Sample 45 - Predicted: 0, Actual: 0
+INFO - Sample 46 - Predicted: 0, Actual: 0
+INFO - Sample 47 - Predicted: 0, Actual: 1
+INFO - Sample 48 - Predicted: 0, Actual: 0
+INFO - Sample 49 - Predicted: 0, Actual: 0
+INFO - Sample 50 - Predicted: 0, Actual: 0
